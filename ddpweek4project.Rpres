@@ -1,28 +1,66 @@
-ddpweek4project
+Developing Data Products Week 4 Project:  Iris Data Shiny Application
 ========================================================
 author: 
-date: 
+date: 9-14-2017
 autosize: true
 
-First Slide
+The Iris Dataset Overview
 ========================================================
 
-For more details on authoring R presentations please visit <https://support.rstudio.com/hc/en-us/articles/200486468>.
+- Looks at data from 50 flower samples of 3 species of iris
+- Included data parameters are Sepal Length, Sepal Width, Petal Length, Petal Width
+- A further description as well as other information on this dataset can be found on the help page at <https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/iris.html>.
 
-- Bullet 1
-- Bullet 2
-- Bullet 3
-
-Slide With Code
+Sample of Iris Dataset
 ========================================================
 
-```{r}
-summary(cars)
+```{r, echo = FALSE}
+head(iris, 10)
 ```
 
-Slide With Plot
+Shiny Application Overview
+========================================================
+
+- Objective
+      - Predict the petal length for a particular species of iris based on the petal width using a simple linear model
+- Inputs
+      - The petal width for which a predicted petal length is desired
+      - Species of iris that is of interest (can select any combination of the three species in the dataset)
+- Outputs
+      - Scatterplot of petal width vs petal length for the dataset with linear model overlays including prediction point
+      - Predicted Petal Length for each species based on the input petal width
+- App Location
+      - <https://pulsar135.shinyapps.io/week4project/>
+
+Sample of Shiny Application Base Scatterplot
 ========================================================
 
 ```{r, echo=FALSE}
-plot(cars)
+library(ggplot2)
+
+modelsetos <- lm(Petal.Length ~ Petal.Width, 
+                 data = subset(iris, Species == "setosa"))
+
+modelversi <- lm(Petal.Length ~ Petal.Width, 
+                 data = subset(iris, Species == "versicolor"))
+
+modelvirgi <- lm(Petal.Length ~ Petal.Width, 
+                 data = subset(iris, Species == "virginica"))
+   
+g <- ggplot(iris, aes(x = Petal.Width, y = Petal.Length, color = Species)) + 
+            labs(title = "Iris Data: Petal Width vs Petal Length") + 
+            labs(x = "Petal Width") + 
+            labs(y = "Petal Length") + 
+            theme(plot.title = element_text(hjust = 0.5)) + 
+            geom_point() + 
+            scale_color_manual(values = c( "setosa" = "red", 
+                                           "versicolor" = "green", 
+                                           "virginica" = "blue"))
+
+g + geom_abline(intercept = coef(modelsetos)[1], slope = coef(modelsetos)[2], 
+                color = "red", size = 0.75) +
+    geom_abline(intercept = coef(modelversi)[1], slope = coef(modelversi)[2], 
+                color = "green", size = 0.75) +
+    geom_abline(intercept = coef(modelvirgi)[1], slope = coef(modelvirgi)[2], 
+                color = "blue", size = 0.75)
 ```

@@ -1,23 +1,19 @@
-#
-# This is the server logic of a Shiny web application. You can run the 
-# application by clicking 'Run App' above.
-#
-# Find out more about building applications with Shiny here:
-# 
-#    http://shiny.rstudio.com/
-#
+# Server logic for the shiny web application described in the accompanying ui.R 
+# file
 
 library(shiny)
 
-# Define server logic required to draw a histogram
+# Define server logic
 shinyServer(function(input, output) {
+   # Create a simple linear model on petal length for each flower species
    modelsetos <- lm(Petal.Length ~ Petal.Width, 
                     data = subset(iris, Species == "setosa"))
    modelversi <- lm(Petal.Length ~ Petal.Width, 
                     data = subset(iris, Species == "versicolor"))
    modelvirgi <- lm(Petal.Length ~ Petal.Width, 
                     data = subset(iris, Species == "virginica"))
-  
+   
+   # Predict a petal length from each linear model based on petal width input
    modelsetospred <- reactive({
          PWinput <- input$slidePW
          predict(modelsetos, newdata = data.frame(Petal.Width = PWinput))
@@ -33,6 +29,7 @@ shinyServer(function(input, output) {
          predict(modelvirgi, newdata = data.frame(Petal.Width = PWinput))
    })
    
+   # Create the output scatterplot with linear model overlays
    output$plot <- renderPlot({
          g <- ggplot(subset(iris, Species %in% input$species), 
                      aes(x = Petal.Width, y = Petal.Length, color = Species)) +
@@ -41,7 +38,9 @@ shinyServer(function(input, output) {
          labs(y = "Petal Length") + 
          theme(plot.title = element_text(hjust = 0.5)) +
          geom_point() +
-         scale_color_manual(values = c( "setosa" = "red", "versicolor" = "green", "virginica" = "blue"))
+         scale_color_manual(values = c( "setosa" = "red", 
+                                        "versicolor" = "green", 
+                                        "virginica" = "blue"))
          
          if("setosa" %in% input$species) {
                g <- g + geom_abline(intercept = coef(modelsetos)[1], 
@@ -71,6 +70,8 @@ shinyServer(function(input, output) {
          g
   })
   
+  # Create output text of the predicted petal lengths based on 
+  # input petal widths
   output$setospred <- renderText({ 
                                     if("setosa" %in% input$species) { 
                                           modelsetospred()

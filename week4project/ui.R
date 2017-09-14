@@ -1,22 +1,25 @@
-#
-# This is the user-interface definition of a Shiny web application. You can
-# run the application by clicking 'Run App' above.
-#
-# Find out more about building applications with Shiny here:
-# 
-#    http://shiny.rstudio.com/
-#
+# Iris Data Application
+# Shiny application that plots petal width vs petal length for each of the 3 
+# flower species included in the iris dataset in the R datasets package. 
+# The app also creates a simple linear model for each flower species that 
+# estimates petal length based on the petal width and adds that to the plot
+# The user is able to select the flower species of interest and input a petal
+# width used to predict petal length with the linear model
 
+# Load Libraries
 library(shiny)
 library(ggplot2)
+library(markdown)
 
-# Define UI for application that draws a histogram
+# Define UI for application that draws a scatterplot and outputs predicted 
+# petal length
 shinyUI(fluidPage(
   
   # Application title
-  titlePanel("Iris Data"),
+  titlePanel("Iris Data Application"),
   
-  # Sidebar with a slider input for number of bins 
+  # Sidebar with a slider input for petal width and checkbox group for species 
+  # selection
   sidebarLayout(
     sidebarPanel(
        sliderInput("slidePW", "Select a petal width:", 0.1, 2.5, value = 1),
@@ -25,10 +28,12 @@ shinyUI(fluidPage(
        
     ),
     
-    # Show a plot of the generated distribution
+    # Main output panel
     mainPanel(
        tabsetPanel(type = "tabs",
                    
+                   # Show a scatter plot of the petal width/length data and 
+                   #output of predicted petal length values
                    tabPanel(
                               "Application",
                               
@@ -45,9 +50,11 @@ shinyUI(fluidPage(
                               textOutput("virgipred")
                    ),
                    
+                   # Documentation for how the app works
                    tabPanel(
                               "Documentation",
-                              h2("Explain Stuff Here")
+                              mainPanel( includeMarkdown("appdoc.md")
+                              )
                    )
        )
     )
